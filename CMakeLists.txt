@@ -34,6 +34,9 @@ find_package(Qt5Widgets REQUIRED)
 find_package(GLUT REQUIRED)
 include_directories(${GLUT_INCLUDE_DIR})
 # /System/Library/Frameworks/OpenGL.framework
+# Prefer new GLVND libraries. For details see:
+# cmake --help-policy CMP0072
+cmake_policy(SET CMP0072 NEW)
 find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIR})
 
