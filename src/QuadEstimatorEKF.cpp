@@ -169,6 +169,22 @@ VectorXf QuadEstimatorEKF::PredictState(VectorXf curState, float dt, V3F accel, 
 
   ////////////////////////////// BEGIN STUDENT CODE ///////////////////////////
 
+  V3F acci = attitude.Rotate_BtoI(accel);
+
+  float x = predictedState(0) + predictedState(3) * dt;
+  float y = predictedState(1) + predictedState(4) * dt;
+  float z = predictedState(2) + predictedState(5) * dt;
+
+  float x_dot = predictedState(3) + dt * acci.x;
+  float y_dot = predictedState(4) + dt * acci.y;
+  float z_dot = predictedState(5) + (acci.z - CONST_GRAVITY) * dt;
+
+  predictedState(0) = x;
+  predictedState(1) = y;
+  predictedState(2) = z;
+  predictedState(3) = x_dot;
+  predictedState(4) = y_dot;
+  predictedState(5) = z_dot;
 
   /////////////////////////////// END STUDENT CODE ////////////////////////////
 
@@ -196,6 +212,13 @@ MatrixXf QuadEstimatorEKF::GetRbgPrime(float roll, float pitch, float yaw)
 
   ////////////////////////////// BEGIN STUDENT CODE ///////////////////////////
 
+  RbgPrime(0,0) = -cos(pitch) * sin(yaw);
+  RbgPrime(0,1) = -sin(roll) * sin(pitch) * sin(yaw) - cos(roll) * cos(yaw);
+  RbgPrime(0,2) = -cos(roll) * sin(pitch) * sin(yaw) + sin(roll) * cos(yaw);
+
+  RbgPrime(1,0) = cos(pitch) * sin(yaw);
+  RbgPrime(1,1) = sin(roll) * sin(pitch) * sin(yaw) - cos(roll) * sin(yaw);
+  RbgPrime(1,2) = cos(roll) * sin(pitch) * cos(yaw) + sin(roll) * sin(yaw);
 
   /////////////////////////////// END STUDENT CODE ////////////////////////////
 
@@ -242,6 +265,15 @@ void QuadEstimatorEKF::Predict(float dt, V3F accel, V3F gyro)
 
   ////////////////////////////// BEGIN STUDENT CODE ///////////////////////////
 
+  gPrime(0, 3) = dt;
+  gPrime(1, 4) = dt;
+  gPrime(2, 5) = dt;
+
+  gPrime(3, 6) = (RbgPrime(0) * accel).sum() * dt;
+  gPrime(4, 6) = (RbgPrime(1) * accel).sum() * dt;
+  gPrime(5, 6) = (RbgPrime(2) * accel).sum() * dt;
+
+  ekfCov = gPrime * (ekfCov * gPrime.transpose()) + Q;
 
   /////////////////////////////// END STUDENT CODE ////////////////////////////
 
