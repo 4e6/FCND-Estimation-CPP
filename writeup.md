@@ -1,12 +1,13 @@
 # Estimator Project Writeup
 
-Summary on developing an estimator of the drone controller.
+Summary of developing an estimator for the drone controller.
 
 ## Step 1: Sensor noice
 
 > Success criteria: Your standard deviations should accurately capture the value of approximately 68% of the respective measurements
 
-The script reads the values and calculates standard devaition.
+I implemented `read_sensors.py` Python script that reads the values and
+calculates standard devaition.
 
 ``` python
 import csv
@@ -38,7 +39,8 @@ MeasuredStdDev_AccelXY = 0.49
 > Success criteria: Your attitude estimator needs to get within 0.1 rad for each of the Euler angles for at least 3 seconds.
 
 I used `FromEuler123_RPY` function from `Quaternion` class for creating a
-quaternion from Euler Roll/PitchYaw, and integrated it with `IntegrateBodyRate`.
+quaternion from Euler Roll/PitchYaw, and integrated it with `IntegrateBodyRate`
+function.
 
 ``` c++
   Quaternion<float> quat = Quaternion<float>::FromEuler123_RPY(rollEst, pitchEst, ekfState(6));
@@ -63,7 +65,7 @@ I implemented this step using equations from the section
 `GetRbgPrime` function calculates rotation matrix
 
 <p align="center">
-  <img src="writeup/rbg.png" width="300"/>
+  <img src="writeup/rbg.png" width="500"/>
 </p>
 
 and `Predict` function predict state covariance
@@ -105,7 +107,7 @@ The model for the GPS was described in section 7.3.1 of the
 </p>
 
 <p align="center">
-  <img src="writeup/stepr5.gif" width="500"/>
+  <img src="writeup/step5.gif" width="500"/>
 </p>
 
 ## Step 6: Adding Your Controller
@@ -117,7 +119,7 @@ I copied `QuadController.cpp` and `QuadControlParams.txt` from my last project
 and it worked without any configuration adjustments.
 
 <p align="center">
-  <img src="writeup/stepr6.gif" width="500"/>
+  <img src="writeup/step6.gif" width="500"/>
 </p>
 
 
